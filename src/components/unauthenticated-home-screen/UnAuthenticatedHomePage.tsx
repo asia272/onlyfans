@@ -1,8 +1,12 @@
-import TodaysHighlight from "../TodaysHighlight";
 import HeroSection from "./HeroSection";
 import UnderlinedText from "@/components/decorators/UnderlinedText";
-
-
+import TodaysHighlight from "./TodaysHighlight";
+import RotatedText from "@/components/decorators/RotatedText";
+import MasonryGrid from "./MasonryGrid";
+// import Features from "./Features";
+// import Testimonials from "./Testimonials";
+// import Pricing from "@/components/Pricing";
+// import Team from "./Team";
 
 const AuthScreen = () => {
     return (
@@ -23,7 +27,18 @@ const AuthScreen = () => {
                     <div className='flex flex-col gap-10 mt-10'>
                         <TodaysHighlight />
 
+                        <div className='mt-24'>
+                            <p className='text-2xl md:text-5xl text-center tracking-tighter font-bold'>
+                                Meet the <RotatedText>Stars</RotatedText> of Our Farm
+                            </p>
 
+                            <MasonryGrid />
+                        </div>
+
+                        {/* <Features />
+						<Testimonials />
+						<Pricing />
+						<Team /> */}
                     </div>
                 </div>
             </div>
