@@ -1,4 +1,5 @@
 import Image from "next/image";
+import AuthButtons from "./AuthButtons";
 
 
 const HeroSection = () => {
@@ -28,7 +29,7 @@ const HeroSection = () => {
                         Built for <span className='bg-sky-500 font-bold px-2 text-white'>HORSES</span> NOT{" "}
                         <span className='bg-red-500 px-2 font-bold text-white'>OTHERS</span>
                     </p>
-                    {/* Auth compoetn btnsill be dispaly herer */}
+                    <AuthButtons />
                 </div>
             </div>
 
