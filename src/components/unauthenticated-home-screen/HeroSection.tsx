@@ -1,10 +1,12 @@
 import Image from "next/image";
 import AuthButtons from "./AuthButtons";
+import { ModeToggle } from "../ModeToggle";
 
 
 const HeroSection = () => {
     return (
         <div className='flex h-screen w-full'>
+            <ModeToggle />
             <div className='flex-1 flex overflow-hidden bg-[#00b0f0a6] relative justify-center items-center z-10 bg-noise'>
                 <img
                     src='/of-logo.svg'
