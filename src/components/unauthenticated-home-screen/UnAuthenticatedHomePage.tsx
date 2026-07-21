@@ -3,8 +3,9 @@ import UnderlinedText from "@/components/decorators/UnderlinedText";
 import TodaysHighlight from "./TodaysHighlight";
 import RotatedText from "@/components/decorators/RotatedText";
 import MasonryGrid from "./MasonryGrid";
-// import Features from "./Features";
-// import Testimonials from "./Testimonials";
+import Features from "./Features";
+import Testimonials from "./Testimonials";
+
 // import Pricing from "@/components/Pricing";
 // import Team from "./Team";
 
@@ -35,9 +36,9 @@ const AuthScreen = () => {
                             <MasonryGrid />
                         </div>
 
-                        {/* <Features />
-						<Testimonials />
-						<Pricing />
+                        <Features />
+                        <Testimonials />
+                        {/* <Pricing />
 						<Team /> */}
                     </div>
                 </div>
