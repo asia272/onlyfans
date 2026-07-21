@@ -7,7 +7,7 @@ const AuthenticatedHomePage = async () => {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
     return (
-        <BaseLayout>
+        <BaseLayout renderRightPanel={false}>
             lout our hter
         </BaseLayout>
     )
