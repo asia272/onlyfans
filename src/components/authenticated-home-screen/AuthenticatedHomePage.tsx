@@ -1,6 +1,7 @@
 import { LogoutLink, useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { getKindeServerSession } from '@kinde-oss/kinde-auth-nextjs/server';
 import BaseLayout from '../BaseLayout';
+import UserProfile from './UserProfile';
 
 
 const AuthenticatedHomePage = async () => {
@@ -8,7 +9,7 @@ const AuthenticatedHomePage = async () => {
     const user = await getUser();
     return (
         <BaseLayout renderRightPanel={false}>
-            lout our hter
+            <UserProfile />
         </BaseLayout>
     )
 }
