@@ -32,7 +32,16 @@ const UserProfile = () => {
                         )}
                     </div>
                 </div>
+                <div className='flex flex-col mt-4'>
+                    <p className='text-lg font-semibold'>User name</p>
+                    <p className='text-sm mt-2 md:text-md'>
+                        Discover daily tips and tricks for horse health and care, along with insights into my personal
+                        routine with my horses. Subscribe now to gain access to exclusive content and become part of the
+                        community.
+                    </p>
+                </div>
             </div>
+            <div aria-hidden='true' className='h-2 w-full bg-muted' />
         </div>
     )
 }
