@@ -3,6 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { buttonVariants } from "./ui/button";
+import Image from "next/image";
+import ZoomedImage from "./ZoomedImage";
 
 
 const SuggestedProduct = ({ product }: { product: any }) => {
@@ -19,7 +21,7 @@ const SuggestedProduct = ({ product }: { product: any }) => {
                 </div>
             </CardHeader>
             <CardContent className='flex flex-col flex-1 gap-2 p-2'>
-
+                <ZoomedImage imgSrc={product.image} className='h-44' />
                 <div className='flex justify-center mt-auto'>
                     <Link href={`/merch/${product.id}`} className={cn("w-full", buttonVariants({ size: "sm" }))}>
                         Buy

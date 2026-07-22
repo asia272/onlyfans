@@ -9,7 +9,7 @@ const AuthenticatedHomePage = async () => {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
     return (
-        <BaseLayout renderRightPanel={false}>
+        <BaseLayout renderRightPanel={true}>
             <UserProfile />
 
             <Posts />
