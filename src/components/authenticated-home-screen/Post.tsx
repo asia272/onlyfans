@@ -1,12 +1,19 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
-import { ImageIcon, LockKeyholeIcon, Trash } from 'lucide-react'
+import { Heart, ImageIcon, LockKeyholeIcon, MessageCircle, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { CldVideoPlayer } from 'next-cloudinary'
 import { user } from '@/dummy_data'
 import Link from 'next/link'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
+import { ScrollArea } from '../ui/scroll-area'
+import { Button } from '../ui/button'
+import { cn } from '@/lib/utils'
 
 const Post = ({ post, isSubscribed, admin }: { post: any, isSubscribed: boolean, admin: any }) => {
+
+    const [isLiked, setIsLiked] = useState(false)
+
     return (
         <div className='flex flex-col gap-3 p-3 border-t'>
             <div className='flex items-center justify-between'>
@@ -68,8 +75,65 @@ const Post = ({ post, isSubscribed, admin }: { post: any, isSubscribed: boolean,
                     </div>
                 </div>
             )}
+            {/* show all like and comment for every post. Also add like and comment if user is authenticted */}
+            <div className='flex gap-4'>
+                <div className='flex gap-1 items-center'>
+                    <Heart
+                        className={cn("w-5 h-5 cursor-pointer", { "text-red-500": isLiked, "fill-red-500": isLiked })}
+                        onClick={() => setIsLiked(!isLiked)}
+                    />
+                    <span className='text-xs text-zinc-400 tracking-tighter'>{post.likes}</span>
+                </div>
 
+                {/* Todo for comments */}
+                {/* <div className='flex gap-1 items-center'>
+                    <Dialog>
+                        <DialogTrigger>
+                            <MessageCircle className='w-5 h-5 cursor-pointer' />
+                        </DialogTrigger>
+                        {isSubscribed && (
+                            <DialogContent className='sm:max-w-[425px]'>
+                                <DialogHeader>
+                                    <DialogTitle>Comments</DialogTitle>
+                                </DialogHeader>
+                                <ScrollArea className='h-[400px] w-[350px] rounded-md p-4'>
+                                    {post.comments.map((comment: any) => (
+                                        // <Comment key={comment.id} comment={comment} />
+                                    ))}
 
+                                    {post.comments.length === 0 && (
+                                        <div className='flex flex-col items-center justify-center h-full'>
+                                            <p className='text-zinc-400'>No comments yet</p>
+                                        </div>
+                                    )}
+                                </ScrollArea>
+
+                                <form onSubmit={handleCommentSubmission}>
+                                    <Input
+                                        placeholder='Add a comment'
+                                        onChange={(e) => setComment(e.target.value)}
+                                        value={comment}
+                                    />
+
+                                    <DialogFooter>
+                                        <Button type='submit' className='mt-4' disabled={isCommenting}>
+                                            {isCommenting ? "Commenting..." : "Comment"}
+                                        </Button>
+                                    </DialogFooter>
+                                </form>
+                            </DialogContent>
+                        )}
+                    </Dialog>
+
+                    <div className='flex gap-1 items-center'>
+                        <span className='text-xs text-zinc-400 tracking-tighter'>
+                            {post.comments.length > 0 ? post.comments.length : 0}
+                        </span>
+                    </div>
+
+                </div> */}
+
+            </div>
         </div>
     )
 }
