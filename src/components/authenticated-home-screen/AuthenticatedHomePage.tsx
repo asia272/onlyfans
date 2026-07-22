@@ -11,7 +11,6 @@ const AuthenticatedHomePage = async () => {
     return (
         <BaseLayout renderRightPanel={true}>
             <UserProfile />
-
             <Posts />
         </BaseLayout>
     )

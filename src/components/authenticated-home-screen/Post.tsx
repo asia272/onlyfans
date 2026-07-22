@@ -7,7 +7,7 @@ import { user } from '@/dummy_data'
 import Link from 'next/link'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
 import { ScrollArea } from '../ui/scroll-area'
-import { Button } from '../ui/button'
+import { Button, buttonVariants } from '../ui/button'
 import { cn } from '@/lib/utils'
 
 const Post = ({ post, isSubscribed, admin }: { post: any, isSubscribed: boolean, admin: any }) => {
@@ -68,6 +68,9 @@ const Post = ({ post, isSubscribed, admin }: { post: any, isSubscribed: boolean,
                         </div>
 
                         <Link
+                            className={buttonVariants({
+                                className: "!rounded-full w-full font-bold ",
+                            })}
                             href={"/pricing"}
                         >
                             Subscribe to unlock
@@ -76,6 +79,7 @@ const Post = ({ post, isSubscribed, admin }: { post: any, isSubscribed: boolean,
                 </div>
             )}
             {/* show all like and comment for every post. Also add like and comment if user is authenticted */}
+
             <div className='flex gap-4'>
                 <div className='flex gap-1 items-center'>
                     <Heart
