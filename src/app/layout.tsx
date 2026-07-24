@@ -4,6 +4,8 @@ import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import Footer from "@/components/Footer";
 import "next-cloudinary/dist/cld-video-player.css"
+import TanStackProvider from "@/providers/TanStackProvider";
+import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +41,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <main className="flex-1">
-            {children}
+            <TanStackProvider>
+              <h1>Logout <LogoutLink><button>log out</button></LogoutLink></h1>
+              {children}
+
+            </TanStackProvider>
+
           </main>
 
           <Footer />
