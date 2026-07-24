@@ -1,9 +1,12 @@
-import React from 'react'
+import AddNewProductForm from "./AddNewProductForm";
+import ExistingProducts from "./ExistingProducts";
 
 const StoreTab = () => {
     return (
-        <div>StoreTab</div>
-    )
-}
-
-export default StoreTab
+        <>
+            <AddNewProductForm />
+            <ExistingProducts />
+        </>
+    );
+};
+export default StoreTab;
