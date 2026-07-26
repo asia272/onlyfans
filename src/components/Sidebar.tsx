@@ -11,7 +11,8 @@ import {
 } from "./ui/dropdown-menu";
 import { ModeToggle } from "./ModeToggle";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-// import LogoutButton from "./LogoutButton";
+import LogoutButton from "./LogoutButton";
+
 // import { getUserProfileAction } from "@/app/update-profile/actions";
 
 const SIDEBAR_LINKS = [
@@ -33,8 +34,8 @@ const Sidebar = async () => {
 
     // const userProfile = await getUserProfileAction();
 
-    // const isAdmin = process.env.ADMIN_EMAIL === user?.email;
-    const isAdmin = false;
+    const isAdmin = process.env.ADMIN_EMAIL === user?.email;
+    // const isAdmin = false;
     return (
         <div
             className='flex lg:w-1/5 flex-col gap-3 px-2 border-r sticky
@@ -83,7 +84,7 @@ const Sidebar = async () => {
                         <Link href={process.env.STRIPE_BILLING_PORTAL_LINK_DEV + "?prefilled_email=" + user?.email}>
                             <DropdownMenuItem>Billing</DropdownMenuItem>
                         </Link>
-                        {/* <LogoutButton /> */}
+                        <LogoutButton />
                     </DropdownMenuContent>
                 </DropdownMenu>
 
