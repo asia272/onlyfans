@@ -7,9 +7,10 @@ import ZoomedImage from './ZoomedImage';
 import { useToast } from '@/hooks/use-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toggleProductArchiveAction } from '@/app/actions/actions';
+import { Product } from '@prisma/client';
 
 
-const ProductCard = ({ product, adminView = false }: { product: any; adminView?: boolean }) => {
+const ProductCard = ({ product, adminView = false }: { product: Product; adminView?: boolean }) => {
 
 
     const { toast } = useToast();

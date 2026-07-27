@@ -1,8 +1,16 @@
-import { products } from "@/dummy_data";
+;
 import SuggestedProduct from "./SuggestedProduct";
+import prisma from "@/lib/prisma";
 
 
 const SuggestedProducts = async () => {
+
+    const products = await prisma.product.findMany({
+        where: {
+            isArchived: false,
+        },
+        take: 4,
+    });
 
     return (
         <div
