@@ -1,9 +1,12 @@
 "use client";
+import { addNewProductToStoreAction } from "@/app/actions/actions";
 import RotatedText from "@/components/decorators/RotatedText";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { CldUploadWidget, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import Image from "next/image";
 import { useState } from "react";
@@ -14,7 +17,24 @@ const AddNewProductForm = () => {
     const [price, setPrice] = useState("");
     const [imageUrl, setImageUrl] = useState("");
 
+    const { toast } = useToast();
+    const queryClient = useQueryClient();
 
+    const { mutate: createProduct, isPending } = useMutation({
+        mutationKey: ["createProduct"],
+        mutationFn: async () => await addNewProductToStoreAction({ name, image: imageUrl, price }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["getAllProducts"] });
+            toast({
+                title: "Product Added",
+                description: "The product has been added successfully",
+            });
+
+            setName("");
+            setPrice("");
+            setImageUrl("");
+        },
+    });
 
     return (
         <>
@@ -22,7 +42,12 @@ const AddNewProductForm = () => {
                 Add <RotatedText>New</RotatedText> Product
             </p>
 
-            <form>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    createProduct();
+                }}
+            >
                 <Card className='w-full max-w-md mx-auto'>
                     <CardHeader>
                         <CardTitle className='text-2xl'>New Merch</CardTitle>
@@ -78,8 +103,8 @@ const AddNewProductForm = () => {
                         )}
                     </CardContent>
                     <CardFooter>
-                        <Button className='w-full' type='submit'>
-                            Add product
+                        <Button className='w-full' type='submit' disabled={isPending}>
+                            {isPending ? "Adding..." : "Add Product"}
                         </Button>
                     </CardFooter>
                 </Card>

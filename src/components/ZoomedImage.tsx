@@ -1,6 +1,5 @@
 "use client";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { useState } from "react";
 
 const ZoomedImage = ({ className, imgSrc }: { className?: string; imgSrc: string }) => {
@@ -16,9 +15,8 @@ const ZoomedImage = ({ className, imgSrc }: { className?: string; imgSrc: string
 
     return (
         <div className={cn("w-full relative overflow-hidden h-96", className)} onMouseMove={(e) => handleMouseMove(e)}>
-            <Image
+            <img
                 src={imgSrc}
-                fill
                 alt='Product image'
                 style={{
                     transformOrigin: `${mousePosition.x}% ${mousePosition.y}%`,
