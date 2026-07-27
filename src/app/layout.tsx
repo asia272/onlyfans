@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 import "next-cloudinary/dist/cld-video-player.css"
 import TanStackProvider from "@/providers/TanStackProvider";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs";
-
+import { Toaster } from "@/components/ui/toaster";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -44,11 +44,9 @@ export default function RootLayout({
             <TanStackProvider>
               <h1>Logout <LogoutLink><button>log out</button></LogoutLink></h1>
               {children}
-
+              <Toaster />
             </TanStackProvider>
-
           </main>
-
           <Footer />
         </ThemeProvider>
       </body>

@@ -1,4 +1,5 @@
 "use client";
+import { createPostAction } from "@/app/actions/actions";
 import UnderlinedText from "@/components/decorators/UnderlinedText";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "@tanstack/react-query";
 import { TriangleAlert } from "lucide-react";
 import { CldUploadWidget, CldVideoPlayer, CloudinaryUploadWidgetInfo } from "next-cloudinary";
 import Image from "next/image";
@@ -18,15 +21,41 @@ const ContentTab = () => {
     const [isPublic, setIsPublic] = useState<boolean>(false);
     const [mediaUrl, setMediaUrl] = useState<string>("");
 
-    const isPending = false;
+    const { toast } = useToast();
 
+    const { mutate: createPost, isPending } = useMutation({
+        mutationKey: ["createPost"],
+        mutationFn: async () => createPostAction({ text, isPublic, mediaUrl, mediaType }),
+        onSuccess: () => {
+            toast({
+                title: "Post Created",
+                description: "Your post has been successfully created",
+            });
+            setText("");
+            setMediaType("video");
+            setIsPublic(false);
+            setMediaUrl("");
+        },
+        onError: (error) => {
+            toast({
+                title: "Error",
+                description: error.message,
+                variant: "destructive",
+            });
+        },
+    });
     return (
         <>
             <p className='text-3xl my-5 font-bold text-center uppercase'>
                 <UnderlinedText className='decoration-wavy'>Share</UnderlinedText> Post
             </p>
 
-            <form>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    createPost();
+                }}
+            >
                 <Card className='w-full max-w-md mx-auto'>
                     <CardHeader>
                         <CardTitle className='text-2xl'>New Post</CardTitle>
