@@ -78,27 +78,27 @@ export async function addNewProductToStoreAction({ name, image, price }: Product
     return { success: true, product: newProduct };
 }
 
-// export async function toggleProductArchiveAction(productId: string) {
-//     const isAdmin = await checkIfAdmin();
-//     if (!isAdmin) {
-//         throw new Error("Unauthorized");
-//     }
+export async function toggleProductArchiveAction(productId: string) {
+    const isAdmin = await checkIfAdmin();
+    if (!isAdmin) {
+        throw new Error("Unauthorized");
+    }
 
-//     const product = await prisma.product.findUnique({ where: { id: productId } });
+    const product = await prisma.product.findUnique({ where: { id: productId } });
 
-//     if (!product) {
-//         throw new Error("Product not found");
-//     }
+    if (!product) {
+        throw new Error("Product not found");
+    }
 
-//     const updatedProduct = await prisma.product.update({
-//         where: { id: productId },
-//         data: {
-//             isArchived: !product.isArchived,
-//         },
-//     });
+    const updatedProduct = await prisma.product.update({
+        where: { id: productId },
+        data: {
+            isArchived: !product.isArchived,
+        },
+    });
 
-//     return { success: true, product: updatedProduct };
-// }
+    return { success: true, product: updatedProduct };
+}
 
 // export async function getDashboardData() {
 //     const totalRevenuePromise = Promise.all([

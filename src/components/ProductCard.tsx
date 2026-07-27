@@ -1,12 +1,40 @@
-import React from 'react'
+"use client";
 import { Button, buttonVariants } from './ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"; import { DollarSign } from 'lucide-react';
 import ZoomedImage from './ZoomedImage';
-;
+import { useToast } from '@/hooks/use-toast';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toggleProductArchiveAction } from '@/app/actions/actions';
+
 
 const ProductCard = ({ product, adminView = false }: { product: any; adminView?: boolean }) => {
+
+
+    const { toast } = useToast();
+    const queryClient = useQueryClient();
+
+    const { mutate: toggleArchive, isPending } = useMutation({
+        mutationKey: ["toggleArchive"],
+        mutationFn: async () => await toggleProductArchiveAction(product.id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["getAllProducts"] });
+            toast({
+                title: "Success",
+                description: `Product ${product.isArchived ? "unarchived" : "archived"}`,
+            });
+        },
+        onError: (error) => {
+            toast({
+                title: "Error",
+                description: error.message,
+                variant: "destructive",
+            });
+        },
+    });
+
+
 
 
     return (
@@ -24,7 +52,9 @@ const ProductCard = ({ product, adminView = false }: { product: any; adminView?:
                     {adminView && (
                         <Button
                             className='w-full'
-                            variant={"outline"}   >
+                            variant={"outline"}
+                            onClick={() => toggleArchive()}
+                            disabled={isPending}  >
                             {product.isArchived ? "Unarchive" : "Archive"}
                         </Button>
                     )}
