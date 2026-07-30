@@ -2,18 +2,24 @@
 import UnderlinedText from "@/components/decorators/UnderlinedText";
 import Post from "./Post";
 import PostSkeleton from "../skeletons/PostsSkeleton";
-import { posts, admin, user } from "@/dummy_data";
+// import { posts } from "@/dummy_data";
+import { User } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { getPostsAction } from "@/app/actions/post.action";
 
 
-const Posts = () => {
+const Posts = ({ isSubscribed, admin }: { isSubscribed: boolean, admin: User }) => {
 
-    const isLoading = false;
 
+    const { data: posts, isLoading } = useQuery({
+        queryKey: ["posts"],
+        queryFn: async () => await getPostsAction(),
+    });
     return (
         <div>
             {!isLoading &&
                 posts?.map((post) =>
-                    <Post key={post.id} post={post} admin={admin} isSubscribed={user.isSubscribed} />
+                    <Post key={post.id} post={post} admin={admin} isSubscribed={isSubscribed} />
                 )}
 
             {isLoading && (

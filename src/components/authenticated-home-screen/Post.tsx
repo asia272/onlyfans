@@ -41,7 +41,7 @@ const Post = ({ post, isSubscribed, admin }: { post: any, isSubscribed: boolean,
 
             {(post.isPublic || isSubscribed) && post.mediaUrl && post.mediaType === "image" && (
                 <div className='relative w-full pb-[56.25%] rounded-lg overflow-hidden'>
-                    <Image src={post.mediaUrl} alt='Post Image' className='rounded-lg object-cover' fill />
+                    <img src={post.mediaUrl} alt='Post Image' className='rounded-lg object-cover' />
                 </div>
             )}
 
