@@ -3,16 +3,32 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Heart, ImageIcon, LockKeyholeIcon, MessageCircle, Trash } from 'lucide-react'
 import Image from 'next/image'
 import { CldVideoPlayer } from 'next-cloudinary'
-import { user } from '@/dummy_data'
 import Link from 'next/link'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
 import { ScrollArea } from '../ui/scroll-area'
 import { Button, buttonVariants } from '../ui/button'
 import { cn } from '@/lib/utils'
+import { Prisma, User } from '@prisma/client'
+import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 
-const Post = ({ post, isSubscribed, admin }: { post: any, isSubscribed: boolean, admin: any }) => {
+type PostWithComments = Prisma.PostGetPayload<{
+    include: {
+        comments: {
+            include: {
+                user: true;
+            };
+        };
+        likesList: true;
+    };
+}>;
+
+
+const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscribed: boolean, admin: User }) => {
 
     const [isLiked, setIsLiked] = useState(false)
+    const { user } = useKindeBrowserClient();
+
+
 
     return (
         <div className='flex flex-col gap-3 p-3 border-t'>
@@ -27,7 +43,7 @@ const Post = ({ post, isSubscribed, admin }: { post: any, isSubscribed: boolean,
                 <div className='flex gap-2 items-center'>
                     <p className='text-zinc-400 text-xs md:text-sm tracking-tighter'>17.06.2024</p>
 
-                    {admin.id === user.id && (
+                    {admin.id === user?.id && (
                         <Trash
                             className='w-5 h-5 text-muted-foreground hover:text-red-500 cursor-pointer'
 

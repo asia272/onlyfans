@@ -22,3 +22,15 @@ export async function getPostsAction() {
 
     return posts;
 }
+export async function deletePostAction(postId: string) {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+
+    const post = await prisma.post.findUnique({ where: { id: postId } });
+
+    if (post?.userId !== user?.id) throw new Error("Only admin can delete posts");
+
+    await prisma.post.delete({ where: { id: postId } });
+
+    return { success: true };
+}
