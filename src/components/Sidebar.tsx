@@ -12,6 +12,7 @@ import {
 import { ModeToggle } from "./ModeToggle";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import LogoutButton from "./LogoutButton";
+import { getUserProfileAction } from "@/app/actions/user-profile";
 
 // import { getUserProfileAction } from "@/app/update-profile/actions";
 
@@ -32,10 +33,10 @@ const Sidebar = async () => {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    // const userProfile = await getUserProfileAction();
+    const userProfile = await getUserProfileAction();
 
     const isAdmin = process.env.ADMIN_EMAIL === user?.email;
-    // const isAdmin = false;
+
     return (
         <div
             className='flex lg:w-1/5 flex-col gap-3 px-2 border-r sticky
@@ -43,7 +44,7 @@ const Sidebar = async () => {
         >
             <Link href='/update-profile' className='max-w-fit'>
                 <Avatar className='mt-4 cursor-pointer'>
-                    <AvatarImage src={"/user-placeholder.png"} className='object-cover' />
+                    <AvatarImage src={userProfile?.image || "/user-placeholder.png"} className='object-cover' />
                     <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
             </Link>
