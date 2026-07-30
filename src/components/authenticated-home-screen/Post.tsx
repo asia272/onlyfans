@@ -10,6 +10,9 @@ import { Button, buttonVariants } from '../ui/button'
 import { cn } from '@/lib/utils'
 import { Prisma, User } from '@prisma/client'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
+import { useToast } from '@/hooks/use-toast'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { deletePostAction } from '@/app/actions/post.action'
 
 type PostWithComments = Prisma.PostGetPayload<{
     include: {
@@ -28,7 +31,28 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
     const [isLiked, setIsLiked] = useState(false)
     const { user } = useKindeBrowserClient();
 
+    const { toast } = useToast();
+    const queryClient = useQueryClient();
 
+
+    const { mutate: deletePost } = useMutation({
+        mutationKey: ["deletePost"],
+        mutationFn: async () => await deletePostAction(post.id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["posts"] });
+            toast({
+                title: "Success",
+                description: "Post deleted successfully",
+            });
+        },
+        onError: (error) => {
+            toast({
+                title: "Error",
+                description: error.message,
+                variant: "destructive",
+            });
+        },
+    });
 
     return (
         <div className='flex flex-col gap-3 p-3 border-t'>
@@ -46,7 +70,7 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
                     {admin.id === user?.id && (
                         <Trash
                             className='w-5 h-5 text-muted-foreground hover:text-red-500 cursor-pointer'
-
+                            onClick={() => deletePost()}
                         />
                     )}
                 </div>
