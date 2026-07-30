@@ -34,3 +34,78 @@ export async function deletePostAction(postId: string) {
 
     return { success: true };
 }
+
+export async function toggleLike(postId: string) {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+
+    if (!user) {
+        throw new Error("Unauthorized");
+    }
+
+    const post = await prisma.post.findUnique({
+        where: {
+            id: postId,
+        },
+    });
+
+    if (!post) {
+        throw new Error("Post not found");
+    }
+
+    const existingLike = await prisma.like.findFirst({
+        where: {
+            userId: user.id,
+            postId,
+        },
+    });
+
+    // Unlike
+    if (existingLike) {
+        await prisma.like.delete({
+            where: {
+                id: existingLike.id,
+            },
+        });
+
+        await prisma.post.update({
+            where: {
+                id: postId,
+            },
+            data: {
+                likes: {
+                    decrement: 1,
+                },
+            },
+        });
+
+        return {
+            liked: false,
+            message: "Post unliked",
+        };
+    }
+
+    // Like
+    await prisma.like.create({
+        data: {
+            userId: user.id,
+            postId,
+        },
+    });
+
+    await prisma.post.update({
+        where: {
+            id: postId,
+        },
+        data: {
+            likes: {
+                increment: 1,
+            },
+        },
+    });
+
+    return {
+        liked: true,
+        message: "Post liked",
+    };
+}

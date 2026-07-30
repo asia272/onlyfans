@@ -12,7 +12,9 @@ import { Prisma, User } from '@prisma/client'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { useToast } from '@/hooks/use-toast'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { deletePostAction } from '@/app/actions/post.action'
+import { deletePostAction, toggleLike } from '@/app/actions/post.action'
+
+
 
 type PostWithComments = Prisma.PostGetPayload<{
     include: {
@@ -57,7 +59,7 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
     return (
         <div className='flex flex-col gap-3 p-3 border-t'>
             <div className='flex items-center justify-between'>
-                <div className='flex items-center gap-2'>
+                <div className='flex items-center gap-2l '>
                     <Avatar>
                         <AvatarImage src={admin.image || "/user-placeholder.png"} className='object-cover' />
                         <AvatarFallback>CN</AvatarFallback>
@@ -80,8 +82,8 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
             <p className='text- sm md:text-md'>{post.text}</p>
 
             {(post.isPublic || isSubscribed) && post.mediaUrl && post.mediaType === "image" && (
-                <div className='relative w-full pb-[56.25%] rounded-lg overflow-hidden'>
-                    <img src={post.mediaUrl} alt='Post Image' className='rounded-lg object-cover' />
+                <div className='relative w-full pb-[56.25%] rounded-lg overflow-hidden bg-red-50'>
+                    <img src={post.mediaUrl} alt='Post Image' className='rounded-lg object-cover w-full' />
                 </div>
             )}
 
