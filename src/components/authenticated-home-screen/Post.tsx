@@ -127,9 +127,24 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
             });
         },
     });
-    const handleCommentSubmission = async () => {
+    //Create comment
+    const handleCommentSubmission = (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
+        e.preventDefault();
 
-    }
+        if (!comment.trim()) {
+            toast({
+                title: "Error",
+                description: "Please write a comment.",
+                variant: "destructive",
+            });
+
+            return;
+        }
+
+        createComment();
+    };
     return (
         <div className='flex flex-col gap-3 p-3 border-t'>
             <div className='flex items-center justify-between'>
@@ -204,7 +219,7 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
                                 "text-red-500 fill-red-500": likeState.liked,
                             }
                         )}
-                        onClick={() => likePost()}
+                        onClick={() => isSubscribed && likePost()}
                     />
 
                     <span>{likeState.count}</span>
