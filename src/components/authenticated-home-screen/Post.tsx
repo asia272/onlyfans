@@ -13,6 +13,9 @@ import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { useToast } from '@/hooks/use-toast'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { deletePostAction, toggleLike } from '@/app/actions/post.action'
+import { Engagement } from 'next/font/google'
+import { Input } from '../ui/input'
+import Comment from './Comment'
 
 
 
@@ -30,13 +33,19 @@ type PostWithComments = Prisma.PostGetPayload<{
 
 const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscribed: boolean, admin: User }) => {
 
-    const [isLiked, setIsLiked] = useState(false)
+
     const { user } = useKindeBrowserClient();
+
+    const [likeState, setLikeState] = useState({
+        liked: post.likesList.length > 0,
+        count: post.likes,
+    });
+    const [comment, setComment] = useState("")
 
     const { toast } = useToast();
     const queryClient = useQueryClient();
 
-
+    //Delete post
     const { mutate: deletePost } = useMutation({
         mutationKey: ["deletePost"],
         mutationFn: async () => await deletePostAction(post.id),
@@ -55,7 +64,49 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
             });
         },
     });
+    //Toggle Like
 
+
+    const { mutate: likePost, isPending } = useMutation({
+        mutationFn: () => toggleLike(post.id),
+
+        onMutate: () => {
+            // Save current state for rollback
+            const previousState = likeState;
+
+            // Optimistic update
+            setLikeState((prev) => ({
+                liked: !prev.liked,
+                count: prev.liked ? prev.count - 1 : prev.count + 1,
+            }));
+
+            return { previousState };
+        },
+
+        onError: (_error, _variables, context) => {
+            if (!context) return;
+
+
+
+            // Roll back to previous state
+            setLikeState(context.previousState);
+
+            toast({
+                title: "Error",
+                description: "Something went wrong.",
+                variant: "destructive",
+            });
+        },
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["posts"],
+            });
+        },
+    });
+    const handleCommentSubmission = async () => {
+
+    }
     return (
         <div className='flex flex-col gap-3 p-3 border-t'>
             <div className='flex items-center justify-between'>
@@ -77,7 +128,6 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
                     )}
                 </div>
             </div>
-
 
             <p className='text- sm md:text-md'>{post.text}</p>
 
@@ -125,14 +175,20 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
             <div className='flex gap-4'>
                 <div className='flex gap-1 items-center'>
                     <Heart
-                        className={cn("w-5 h-5 cursor-pointer", { "text-red-500": isLiked, "fill-red-500": isLiked })}
-                        onClick={() => setIsLiked(!isLiked)}
+                        className={cn(
+                            "w-5 h-5 cursor-pointer",
+                            {
+                                "text-red-500 fill-red-500": likeState.liked,
+                            }
+                        )}
+                        onClick={() => likePost()}
                     />
-                    <span className='text-xs text-zinc-400 tracking-tighter'>{post.likes}</span>
+
+                    <span>{likeState.count}</span>
                 </div>
 
-                {/* Todo for comments */}
-                {/* <div className='flex gap-1 items-center'>
+                {/*  for comments */}
+                <div className='flex gap-1 items-center'>
                     <Dialog>
                         <DialogTrigger>
                             <MessageCircle className='w-5 h-5 cursor-pointer' />
@@ -144,7 +200,7 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
                                 </DialogHeader>
                                 <ScrollArea className='h-[400px] w-[350px] rounded-md p-4'>
                                     {post.comments.map((comment: any) => (
-                                        // <Comment key={comment.id} comment={comment} />
+                                        <Comment key={comment.id} comment={comment} />
                                     ))}
 
                                     {post.comments.length === 0 && (
@@ -177,7 +233,7 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
                         </span>
                     </div>
 
-                </div> */}
+                </div>
 
             </div>
         </div>

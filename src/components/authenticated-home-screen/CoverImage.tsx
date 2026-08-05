@@ -3,6 +3,7 @@ import { Heart, Image as ImageIcon, Video } from "lucide-react";
 import Image from "next/image";
 
 const CoverImage = async ({ adminName }: { adminName: string }) => {
+
     const imageCount = await prisma.post.count({
         where: {
             mediaType: "image",

@@ -109,3 +109,41 @@ export async function toggleLike(postId: string) {
         message: "Post liked",
     };
 }
+export async function createCommentAction(
+    postId: string,
+    text: string
+) {
+    const { getUser } = getKindeServerSession();
+    const user = await getUser();
+
+    if (!user) {
+        throw new Error("Unauthorized");
+    }
+
+    if (!text.trim()) {
+        throw new Error("Comment cannot be empty");
+    }
+
+    const dbUser = await prisma.user.findUnique({
+        where: {
+            email: user.email!,
+        },
+    });
+
+    if (!dbUser) {
+        throw new Error("User not found");
+    }
+
+    const comment = await prisma.comment.create({
+        data: {
+            text,
+            postId,
+            userId: dbUser.id,
+        },
+        include: {
+            user: true,
+        },
+    });
+
+    return comment;
+}
