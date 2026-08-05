@@ -109,6 +109,7 @@ export async function toggleLike(postId: string) {
         message: "Post liked",
     };
 }
+//Create comment
 export async function createCommentAction(
     postId: string,
     text: string

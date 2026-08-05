@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import { Heart, ImageIcon, LockKeyholeIcon, MessageCircle, Trash } from 'lucide-react'
-import Image from 'next/image'
 import { CldVideoPlayer } from 'next-cloudinary'
 import Link from 'next/link'
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../ui/dialog'
@@ -12,8 +11,7 @@ import { Prisma, User } from '@prisma/client'
 import { useKindeBrowserClient } from '@kinde-oss/kinde-auth-nextjs'
 import { useToast } from '@/hooks/use-toast'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { deletePostAction, toggleLike } from '@/app/actions/post.action'
-import { Engagement } from 'next/font/google'
+import { deletePostAction, toggleLike, createCommentAction } from '@/app/actions/post.action'
 import { Input } from '../ui/input'
 import Comment from './Comment'
 
@@ -35,16 +33,43 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
 
 
     const { user } = useKindeBrowserClient();
-
-    const [likeState, setLikeState] = useState({
-        liked: post.likesList.length > 0,
-        count: post.likes,
-    });
     const [comment, setComment] = useState("")
 
     const { toast } = useToast();
     const queryClient = useQueryClient();
+    const [likeState, setLikeState] = useState({
+        liked: post.likesList.length > 0,
+        count: post.likes,
+    });
 
+
+    const {
+        mutate: createComment,
+        isPending: isCommenting,
+    } = useMutation({
+        mutationFn: () => createCommentAction(post.id, comment),
+
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ["posts"],
+            });
+
+            toast({
+                title: "Success",
+                description: "Comment added successfully.",
+            });
+
+            setComment("");
+        },
+
+        onError: (error) => {
+            toast({
+                title: "Error",
+                description: error.message,
+                variant: "destructive",
+            });
+        },
+    });
     //Delete post
     const { mutate: deletePost } = useMutation({
         mutationKey: ["deletePost"],
@@ -64,9 +89,7 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
             });
         },
     });
-    //Toggle Like
-
-
+    //Toggle Post Like
     const { mutate: likePost, isPending } = useMutation({
         mutationFn: () => toggleLike(post.id),
 
