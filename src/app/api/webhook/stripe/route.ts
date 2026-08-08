@@ -34,68 +34,73 @@ export async function POST(req: NextRequest) {
     }
 
     try {
+        console.log("Event:", event.type);
         switch (event.type) {
-            case "customer.subscription.created": {
-                const subscription = event.data.object as Stripe.Subscription;
+
+
+            case "checkout.session.completed": {
+                const session = event.data.object as Stripe.Checkout.Session;
+
+                console.log(session);
 
                 const customerId =
-                    typeof subscription.customer === "string"
-                        ? subscription.customer
-                        : subscription.customer.id;
+                    typeof session.customer === "string"
+                        ? session.customer
+                        : session.customer?.id;
 
+                const email = session.customer_details?.email;
 
-                const user = await prisma.user.findFirst({
+                console.log(customerId);
+                console.log(email);
+
+                if (!customerId || !email) break;
+
+                const updatedUser = await prisma.user.update({
                     where: {
+                        email,
+                    },
+                    data: {
                         customerId,
+                        isSubscribed: true,
                     },
                 });
 
+                console.log("Customer ID saved");
 
-                if (!user) break;
+                const subscriptionId =
+                    typeof session.subscription === "string"
+                        ? session.subscription
+                        : session.subscription?.id;
 
+                if (subscriptionId) {
+                    const subscription =
+                        await stripe.subscriptions.retrieve(subscriptionId);
 
-                const priceId = subscription.items.data[0].price.id;
+                    await prisma.subscription.upsert({
+                        where: {
+                            userId: updatedUser.id,
+                        },
+                        create: {
+                            userId: updatedUser.id,
+                            planId: subscription.items.data[0].price.id,
+                            price:
+                                subscription.items.data[0].price.unit_amount ?? 0,
+                            startDate: new Date(),
+                            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                        },
+                        update: {
+                            planId: subscription.items.data[0].price.id,
+                            price:
+                                subscription.items.data[0].price.unit_amount ?? 0,
+                            startDate: new Date(),
+                            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                        },
+                    });
 
-
-                await prisma.subscription.upsert({
-                    where: {
-                        userId: user.id
-                    },
-
-                    create: {
-                        userId: user.id,
-                        planId: priceId,
-
-                        price:
-                            subscription.items.data[0].price.unit_amount ?? 0,
-
-                        startDate: new Date(
-                            subscription.current_period_start * 1000
-                        ),
-
-                        endDate: new Date(
-                            subscription.current_period_end * 1000
-                        )
-                    },
-
-                    update: {
-                        planId: priceId,
-
-                        price:
-                            subscription.items.data[0].price.unit_amount ?? 0,
-
-                        startDate: new Date(
-                            subscription.current_period_start * 1000
-                        ),
-
-                        endDate: new Date(
-                            subscription.current_period_end * 1000
-                        )
-                    }
-                });
+                    console.log("Subscription Created");
+                }
 
 
-                console.log("Subscription Created");
 
                 break;
             }
@@ -108,7 +113,7 @@ export async function POST(req: NextRequest) {
                         ? subscription.customer
                         : subscription.customer.id;
 
-                const user = await prisma.user.findFirst({
+                const user = await prisma.user.findUnique({
                     where: {
                         customerId,
                     },
@@ -142,14 +147,21 @@ export async function POST(req: NextRequest) {
                         ? subscription.customer
                         : subscription.customer.id;
 
-                const user = await prisma.user.findFirst({
+                const user = await prisma.user.findUnique({
                     where: {
                         customerId,
                     },
                 });
 
                 if (!user) break;
-
+                await prisma.user.update({
+                    where: {
+                        id: user.id,
+                    },
+                    data: {
+                        isSubscribed: true,
+                    },
+                });
                 await prisma.subscription.updateMany({
                     where: {
                         userId: user.id,

@@ -8,48 +8,42 @@ datasource db {
 }
 
 model User {
-  id           String  @id @default(cuid())
-  email        String  @unique
+  id           String        @id @default(cuid())
+  email        String        @unique
   name         String
   image        String?
-  isSubscribed Boolean @default(false)
-  customerId   String? @unique // stripe customer id
-
-  subscription Subscription?
-  orders       Order[]
+  isSubscribed Boolean       @default(false)
+  customerId   String?       @unique
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   comments     Comment[]
   likes        Like[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  orders       Order[]
+  subscription Subscription?
 }
 
 model Post {
-  id        String  @id @default(cuid())
+  id        String    @id @default(cuid())
   mediaUrl  String?
   mediaType String?
   text      String
   userId    String
-  likes     Int     @default(0)
-  isPublic  Boolean @default(false)
-
+  likes     Int       @default(0)
+  isPublic  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
   comments  Comment[]
   likesList Like[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Comment {
-  id     String @id @default(cuid())
-  text   String
-  userId String
-  postId String
-
-  post Post @relation(fields: [postId], references: [id])
-  user User @relation(fields: [userId], references: [id])
-
+  id        String   @id @default(cuid())
+  text      String
+  userId    String
+  postId    String
   createdAt DateTime @default(now())
+  post      Post     @relation(fields: [postId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@index([postId])
   @@index([userId])
@@ -59,9 +53,8 @@ model Like {
   id     String @id @default(cuid())
   userId String
   postId String
-
-  user User @relation(fields: [userId], references: [id])
-  post Post @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   @@index([postId])
   @@index([userId])
@@ -74,8 +67,7 @@ model Subscription {
   price     Int      @default(0)
   startDate DateTime @default(now())
   endDate   DateTime
-
-  user User @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
@@ -86,23 +78,21 @@ model Product {
   image      String
   price      Int
   isArchived Boolean @default(false)
-
-  orders Order[]
+  orders     Order[]
 }
 
 model Order {
-  id                String   @id @default(cuid())
+  id                String           @id @default(cuid())
   userId            String
   productId         String
   price             Int
-  isPaid            Boolean  @default(false)
+  isPaid            Boolean          @default(false)
   size              String
-  orderDate         DateTime @default(now())
+  orderDate         DateTime         @default(now())
   shippingAddressId String?
-
-  user            User             @relation(fields: [userId], references: [id])
-  product         Product          @relation(fields: [productId], references: [id])
-  shippingAddress ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  product           Product          @relation(fields: [productId], references: [id])
+  shippingAddress   ShippingAddress? @relation(fields: [shippingAddressId], references: [id])
+  user              User             @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([productId])
@@ -115,6 +105,5 @@ model ShippingAddress {
   state      String?
   postalCode String
   country    String
-
-  order Order[]
+  order      Order[]
 }
