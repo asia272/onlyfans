@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { notFound, useSearchParams } from "next/navigation";
 import { checkProductPaidStatus } from "./actions";
-import { centsToDollars } from "@/lib/utils";
+// import { centsToDollars } from "@/lib/utils";
 
 const sizeMap: { [key: string]: string } = {
     sm: "Small",
@@ -63,7 +63,7 @@ const PurchaseSummary = () => {
                     <CardContent>
                         <div className='flex justify-between'>
                             <p>{order.product.name}</p>
-                            <p>${centsToDollars(order.product.price)}</p>
+                            <p>${order.product.price}</p>
                         </div>
                         <div className='flex justify-between'>
                             <p>Size: {sizeMap[order.size]}</p>
