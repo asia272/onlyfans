@@ -41,7 +41,6 @@ export async function POST(req: NextRequest) {
             case "checkout.session.completed": {
                 const session = event.data.object as Stripe.Checkout.Session;
 
-                console.log(session);
 
                 const customerId =
                     typeof session.customer === "string"
@@ -50,58 +49,72 @@ export async function POST(req: NextRequest) {
 
                 const email = session.customer_details?.email;
 
-                console.log(customerId);
-                console.log(email);
 
                 if (!customerId || !email) break;
 
-                const updatedUser = await prisma.user.update({
-                    where: {
-                        email,
-                    },
-                    data: {
-                        customerId,
-                        isSubscribed: true,
-                    },
-                });
 
-                console.log("Customer ID saved");
 
-                const subscriptionId =
-                    typeof session.subscription === "string"
-                        ? session.subscription
-                        : session.subscription?.id;
+                if (session.mode === "subscription") {
 
-                if (subscriptionId) {
-                    const subscription =
-                        await stripe.subscriptions.retrieve(subscriptionId);
-
-                    await prisma.subscription.upsert({
+                    const updatedUser = await prisma.user.update({
                         where: {
-                            userId: updatedUser.id,
+                            email,
                         },
-                        create: {
-                            userId: updatedUser.id,
-                            planId: subscription.items.data[0].price.id,
-                            price:
-                                subscription.items.data[0].price.unit_amount ?? 0,
-                            startDate: new Date(),
-                            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-                        },
-                        update: {
-                            planId: subscription.items.data[0].price.id,
-                            price:
-                                subscription.items.data[0].price.unit_amount ?? 0,
-                            startDate: new Date(),
-                            endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+                        data: {
+                            customerId,
+                            isSubscribed: true,
                         },
                     });
+                    const subscriptionId =
+                        typeof session.subscription === "string"
+                            ? session.subscription
+                            : session.subscription?.id;
 
-                    console.log("Subscription Created");
+
+                    if (subscriptionId) {
+                        // const subscription =
+                        //     await stripe.subscriptions.retrieve(subscriptionId);
+                        const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+
+                        console.log(JSON.stringify(subscription, null, 2));
+                        const item = subscription.items.data[0];
+
+                        await prisma.subscription.upsert({
+                            where: {
+                                userId: updatedUser.id,
+                            },
+                            create: {
+                                userId: updatedUser.id,
+                                planId: item.price.id,
+                                price: item.price.unit_amount ?? 0,
+
+
+                                startDate: new Date(item.current_period_start * 1000),
+
+                                endDate: new Date(item.current_period_end * 1000),
+                            },
+                            update: {
+                                planId: item.price.id,
+                                price: item.price.unit_amount ?? 0,
+                                startDate: new Date(item.current_period_start * 1000),
+
+                                endDate: new Date(item.current_period_end * 1000),
+                            },
+                        });
+
+                        console.log("Subscription Created");
+                    }
+                } else if (session.mode === "payment") {
+                    const user = await prisma.user.findUnique({
+                        where: { email },
+                    });
+                    // one time payment
+                    // Create Order
+
+                    // Save purchased product
+
+                    // Mark payment successful
                 }
-
-
-
                 break;
             }
 
@@ -154,6 +167,7 @@ export async function POST(req: NextRequest) {
                 });
 
                 if (!user) break;
+                const item = subscription.items.data[0];
                 await prisma.user.update({
                     where: {
                         id: user.id,
@@ -162,23 +176,15 @@ export async function POST(req: NextRequest) {
                         isSubscribed: true,
                     },
                 });
-                await prisma.subscription.updateMany({
+                await prisma.subscription.update({
                     where: {
                         userId: user.id,
                     },
                     data: {
-                        planId: subscription.items.data[0].price.id,
-
-                        price:
-                            subscription.items.data[0].price.unit_amount ?? 0,
-
-                        startDate: new Date(
-                            subscription.current_period_start * 1000
-                        ),
-
-                        endDate: new Date(
-                            subscription.current_period_end * 1000
-                        ),
+                        planId: item.price.id,
+                        price: item.price.unit_amount ?? 0,
+                        startDate: new Date(item.current_period_start * 1000),
+                        endDate: new Date(item.current_period_end * 1000),
                     },
                 });
 

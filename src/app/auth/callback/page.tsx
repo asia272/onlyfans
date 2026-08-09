@@ -25,20 +25,20 @@ const Page = () => {
     useEffect(() => {
         if (checkingAuth || isPending) return;
 
-        if (data?.success !== undefined) {
-            router.replace("/");
-        }
-
-        // Stripe redirect example
-        // const stripeUrl = localStorage.getItem("stripeRedirectUrl");
-        //
-        // if (stripeUrl && user?.email) {
-        //     localStorage.removeItem("stripeRedirectUrl");
-        //     window.location.href =
-        //         `${stripeUrl}?prefilled_email=${user.email}`;
-        // } else if (!user) {
+        // if (data?.success !== undefined) {
         //     router.replace("/");
         // }
+
+        // Stripe redirect example
+        const stripeUrl = localStorage.getItem("stripeRedirectUrl");
+
+        if (stripeUrl && user?.email) {
+            localStorage.removeItem("stripeRedirectUrl");
+            window.location.href =
+                `${stripeUrl}?prefilled_email=${user.email}`;
+        } else if (!user) {
+            router.replace("/");
+        }
     }, [checkingAuth, isPending, data, router, user]);
 
     if (checkingAuth || isPending) {
