@@ -105,15 +105,37 @@ export async function POST(req: NextRequest) {
                         console.log("Subscription Created");
                     }
                 } else if (session.mode === "payment") {
-                    const user = await prisma.user.findUnique({
-                        where: { email },
+                    const checkoutSession = await stripe.checkout.sessions.retrieve(session.id);
+
+                    const { orderId, size } = checkoutSession.metadata as {
+                        orderId: string;
+                        size: string;
+                    };
+                    const shippingDetails =
+                        checkoutSession.collected_information?.shipping_details?.address;
+                    await prisma.order.update({
+                        where: { id: orderId },
+                        data: {
+                            isPaid: true,
+                            size,
+                            shippingAddress: {
+                                create: {
+                                    address: shippingDetails?.line1 ?? "",
+                                    city: shippingDetails?.city ?? "",
+                                    state: shippingDetails?.state ?? "",
+                                    postalCode: shippingDetails?.postal_code ?? "",
+                                    country: shippingDetails?.country ?? "",
+                                },
+                            },
+                        },
+                        select: {
+                            id: true,
+                            product: true,
+                            size: true,
+                            shippingAddress: true,
+                        },
                     });
-                    // one time payment
-                    // Create Order
 
-                    // Save purchased product
-
-                    // Mark payment successful
                 }
                 break;
             }
