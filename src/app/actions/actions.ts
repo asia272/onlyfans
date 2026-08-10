@@ -165,7 +165,7 @@ export async function getDashboardData() {
     const totalRevenue = (totalRevenueResult[0]._sum.price || 0) + (totalRevenueResult[1]._sum.price || 0);
 
     return {
-        totalRevenue: centsToDollars(totalRevenue),
+        totalRevenue: totalRevenue,
         totalSales,
         totalSubscriptions,
         recentSales,
