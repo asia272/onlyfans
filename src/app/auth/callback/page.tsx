@@ -25,9 +25,9 @@ const Page = () => {
     useEffect(() => {
         if (checkingAuth || isPending) return;
 
-        // if (data?.success !== undefined) {
-        //     router.replace("/");
-        // }
+        if (data?.success !== undefined) {
+            router.replace("/");
+        }
 
         // Stripe redirect example
         const stripeUrl = localStorage.getItem("stripeRedirectUrl");
