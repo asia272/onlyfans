@@ -22,21 +22,40 @@ const Page = () => {
         queryFn: checkAuthStatus,
     });
 
+
+    //     if (checkingAuth || isPending) return;
+
+    //     // if (data?.success !== undefined) {
+    //     //     router.replace("/");
+    //     // }
+
+    //     // Stripe redirect example
+    //     const stripeUrl = localStorage.getItem("stripeRedirectUrl");
+
+    //     if (stripeUrl && user?.email) {
+    //         localStorage.removeItem("stripeRedirectUrl");
+    //         window.location.href =
+    //             `${stripeUrl}?prefilled_email=${user.email}`;
+    //     } else if (!user) {
+    //         router.replace("/");
+    //     }
+    // }, [checkingAuth, isPending, data, router, user]);
     useEffect(() => {
         if (checkingAuth || isPending) return;
 
-        if (data?.success !== undefined) {
+        if (!data?.success) {
             router.replace("/");
+            return;
         }
 
-        // Stripe redirect example
         const stripeUrl = localStorage.getItem("stripeRedirectUrl");
 
         if (stripeUrl && user?.email) {
             localStorage.removeItem("stripeRedirectUrl");
+
             window.location.href =
-                `${stripeUrl}?prefilled_email=${user.email}`;
-        } else if (!user) {
+                `${stripeUrl}?prefilled_email=${encodeURIComponent(user.email)}`;
+        } else {
             router.replace("/");
         }
     }, [checkingAuth, isPending, data, router, user]);
