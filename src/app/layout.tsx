@@ -42,7 +42,6 @@ export default function RootLayout({
         >
           <main className="flex-1">
             <TanStackProvider>
-              <h1>Logout <LogoutLink><button>log out</button></LogoutLink></h1>
               {children}
               <Toaster />
             </TanStackProvider>
