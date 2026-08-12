@@ -153,7 +153,7 @@ const Post = ({ post, isSubscribed, admin }: { post: PostWithComments, isSubscri
                         <AvatarImage src={admin.image || "/user-placeholder.png"} className='object-cover' />
                         <AvatarFallback>CN</AvatarFallback>
                     </Avatar>
-                    <span className='font-semibold text-sm md:text-md'>{admin.name}</span>
+                    <span className='font-semibold text-sm md:text-md ml-2'>{admin.name}</span>
                 </div>
                 <div className='flex gap-2 items-center'>
                     <p className='text-zinc-400 text-xs md:text-sm tracking-tighter'>17.06.2024</p>
