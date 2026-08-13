@@ -1,7 +1,7 @@
 const Footer = () => {
     return (
-        <footer className="border-t ">
-            <div className="container flex flex-col items-center justify-between gap-4 py-8 text-sm text-muted-foreground md:flex-row">
+        <footer className="border-t container mx-auto">
+            <div className="container flex flex-col items-center justify-between gap-4 text-sm px-4 text-muted-foreground md:flex-row">
                 <p>
                     © {new Date().getFullYear()} OnlyHorse. All rights reserved.
                 </p>
