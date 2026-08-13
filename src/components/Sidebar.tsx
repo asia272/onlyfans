@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Shirt, Home, LayoutDashboard, User, CreditCard } from "lucide-react";
+import { Shirt, Home, LayoutDashboard, User, CreditCard, UserCircle } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -85,6 +85,15 @@ const Sidebar = async () => {
                         <DropdownMenuGroup>
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <Link
+                                    href="/update-profile"
+                                    className="flex w-full items-center gap-2"
+                                >
+                                    <UserCircle className="h-4 w-4" />
+                                    <span>Update Profile</span>
+                                </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <Link
                                     href={`${process.env.STRIPE_BILLING_PORTAL_LINK_DEV}?prefilled_email=${user?.email}`}
