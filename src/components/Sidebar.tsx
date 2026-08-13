@@ -85,7 +85,7 @@ const Sidebar = async () => {
                         <DropdownMenuGroup>
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem asChild>
+                            <DropdownMenuItem>
                                 <Link
                                     href={`${process.env.STRIPE_BILLING_PORTAL_LINK_DEV}?prefilled_email=${user?.email}`}
                                     className="flex w-full items-center gap-2 cursor-pointer"
@@ -94,7 +94,7 @@ const Sidebar = async () => {
                                     <span>Billing</span>
                                 </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
+                            <DropdownMenuItem>
                                 <LogoutButton />
                             </DropdownMenuItem>
 
