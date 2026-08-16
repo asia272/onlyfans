@@ -28,6 +28,7 @@ const UserProfile = async () => {
                     </Avatar>
 
                     <div className='flex'>
+                        //when not Subscribe
                         {!currentUser?.isSubscribed && (
                             <Button className='rounded-full flex gap-10'>
                                 <Link href={"/pricing"}>
@@ -35,7 +36,7 @@ const UserProfile = async () => {
                                 </Link>
                             </Button>
                         )}
-
+//when Subscribe
                         {currentUser?.isSubscribed && (
                             <Button className='rounded-full flex gap-10' variant={"outline"}>
                                 <span className='uppercase font-semibold tracking-wide'>Subscribed</span>
